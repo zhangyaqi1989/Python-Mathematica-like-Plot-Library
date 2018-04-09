@@ -4,7 +4,8 @@
 # University of Wisconsin-Madison
 # Author: Yaqi Zhang
 ##################################
-# A Mathematica like plot
+# A Python library that mimics
+# Mathematica plot functionality
 ##################################
 
 from sympy import lambdify
@@ -31,14 +32,73 @@ def Plot3D(expression, x_specs, y_specs):
     fig = plt.figure()
     ax = fig.gca(projection='3d')
     ax.plot_surface(X, Y, Z, color='orange')
-    plt.show()
+    return ax
+
+
+def ListLinePlot(lst):
+    """ mimic ListLinePlot() function of Mathematica
+        Usage: ListLinePlot([1, 1, 2, 3, 5, 8])
+    """
+    fig, ax = plt.subplots()
+    ax.plot(lst)
+    return ax
+
+
+def PolarPlot(expressions, arg_specs, legends=False):
+    """ mimic PolarPlot() function of Mathematica
+        Usage: PolarPlot(["sin(t)"], ['t', 0, 2*np.pi], legends=True)
+    """
+    n = len(expressions)
+    funcs = [None] * n
+    arg, arg_min, arg_max = arg_specs
+    for i, expression in enumerate(expressions):
+        funcs[i] = lambdify(parse_expr(arg, evaluate=False), \
+                parse_expr(expression, evaluate=False))
+        n_points = 100
+    ts = np.linspace(arg_min, arg_max, n_points)
+    fig, ax = plt.subplots()
+    for i, func in enumerate(funcs):
+        func_v = np.vectorize(func)
+        rs = func_v(ts)
+        xs = rs*np.cos(ts)
+        ys = rs*np.sin(ts)
+        ax.plot(xs, ys, label=expressions[i])
+    if legends:
+        ax.legend(loc="best")
+    return ax
+
+
+def ParametricPlot(expressions, arg_specs, legends=False):
+    """mimic ParametricPlot() function of Mathematica
+       Usage: ParametricPlot([["cos(u)", "sin(u)"]], ["u", 0, 2*np.pi], legends=True)
+    """
+    arg, arg_min, arg_max = arg_specs
+    n = len(expressions)
+    x_funcs = [None] * n
+    y_funcs = [None] * n
+    for i, (x_expression, y_expression) in enumerate(expressions):
+        x_funcs[i] = lambdify(parse_expr(arg, evaluate=False), \
+                parse_expr(x_expression, evaluate=False))
+        y_funcs[i] = lambdify(parse_expr(arg, evaluate=False), \
+                parse_expr(y_expression, evaluate=False))
+    n_points = 100
+    ts = np.linspace(arg_min, arg_max, n_points)
+    fig, ax = plt.subplots()
+    for i, (x_func, y_func) in enumerate(zip(x_funcs, y_funcs)):
+        x_func_v = np.vectorize(x_func)
+        y_func_v = np.vectorize(y_func)
+        xs = x_func_v(ts)
+        ys = y_func_v(ts)
+        ax.plot(xs, ys, label=expressions[i])
+    if legends:
+        ax.legend(loc="best")
+    return ax
 
 
 def Plot(expressions, arg_specs, legends=False):
     """ mimic Plot() function of Mathematica
         Usage: Plot(["sin(x)", "cos(x)"], ['x', 0, 2*np.pi], legends=True)
     """
-    fig, ax = plt.subplots()
     n = len(expressions)
     funcs = [None] * n
     arg, arg_min, arg_max = arg_specs
@@ -47,27 +107,50 @@ def Plot(expressions, arg_specs, legends=False):
                 parse_expr(expression, evaluate=False))
     n_points = 100
     xs = np.linspace(arg_min, arg_max, n_points)
+    fig, ax = plt.subplots()
     for i, func in enumerate(funcs):
         func_v = np.vectorize(func)
         ys = func_v(xs)
         ax.plot(xs, ys, label=expressions[i])
     if legends:
         ax.legend(loc="best")
-    plt.show()
+    return ax
 
 
 def test_Plot():
     """test Plot()"""
     expressions = ['sin(x)', 'sin(2*x)', 'sin(3*x)']
-    Plot(expressions, ['x', 0, 2*np.pi], legends=True)
+    return Plot(expressions, ['x', 0, 2*np.pi], legends=True)
+
+
+def test_ListLinePlot():
+    """test ListLinePlot()"""
+    return ListLinePlot([1, 1, 2, 3, 5, 8])
+
+
+def test_ParametricPlot():
+    """test ParametricPlot()"""
+    expressions = [['2*cos(u)', '2*sin(u)'], ['2*cos(u)', 'sin(u)'], ['cos(u)', '2*sin(u)'], ['cos(u)', 'sin(u)']]
+    return ParametricPlot(expressions, ['u', 0, 2*np.pi], legends=True)
+
+
+def test_PolarPlot():
+    """test PolarPlot()"""
+    expressions = ['1', '1 + 1/10 * sin(10*t)']
+    return PolarPlot(expressions, ['t', 0, 2*np.pi])
 
 
 def test_Plot3D():
     """test Plot3D()"""
     expression = 'sin(x + y**2)'
-    Plot3D(expression, ['x', -3, 3], ['y', -2, 2])
+    return Plot3D(expression, ['x', -3, 3], ['y', -2, 2])
 
 
 if __name__ == "__main__":
-    # test_Plot()
-    test_Plot3D()
+    # ax = test_Plot()
+    # ax = test_Plot3D()
+    # ax = test_ParametricPlot()
+    ax = test_PolarPlot()
+    # ax = test_ListLinePlot()
+    plt.axis('equal')
+    plt.show()
