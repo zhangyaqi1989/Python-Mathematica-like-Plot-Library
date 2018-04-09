@@ -2,9 +2,11 @@
 With this library, you could plot functions like
 Mathematica.
 
-![ipython](images/readme.png)
+![code](images/code-example.png)
 
-For example, the above code will generate the below plot.
+For example, the above code will generate the below plots respectively.
 
-![plot](images/fig-1.png)
+![Plot](images/plot-example.png)
+
+![Plot3D](images/plot3d-example.png)
 
