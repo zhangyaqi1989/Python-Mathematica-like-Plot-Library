@@ -15,6 +15,33 @@ from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
 
 
+def ParametricPlot3D(expression, u_specs, v_specs):
+    """"""
+    u, u_min, u_max = u_specs
+    v, v_min, v_max = v_specs
+    n_points = 100
+    u_angles = np.linspace(0, 2*np.pi, n_points)
+    v_angles = np.linspace(0, 2*np.pi, n_points)
+    us, vs = np.meshgrid(u_angles, v_angles)
+    x_func = lambdify([parse_expr(u, evaluate=False), parse_expr(v, evaluate=False)],
+            parse_expr(expression[0], evaluate=False))
+    vec_x_func = np.vectorize(x_func)
+    y_func = lambdify([parse_expr(u, evaluate=False), parse_expr(v, evaluate=False)],
+            parse_expr(expression[1], evaluate=False))
+    vec_y_func = np.vectorize(y_func)
+    z_func = lambdify([parse_expr(u, evaluate=False), parse_expr(v, evaluate=False)],
+            parse_expr(expression[2], evaluate=False))
+    vec_z_func = np.vectorize(z_func)
+    xs = vec_x_func(us, vs)
+    ys = vec_y_func(us, vs)
+    zs = vec_z_func(us, vs)
+    # print(zs.shape)
+    fig = plt.figure()
+    ax = fig.gca(projection='3d')
+    ax.plot_surface(xs, ys, zs, color='orange')
+    return ax
+
+
 def Plot3D(expression, x_specs, y_specs):
     """ mimic Plot3D() function of Mathematica
         Usage: Plot3D("sin(x + y**2)", ['x', -3, 3], ['y', -2, 2])
@@ -42,6 +69,10 @@ def ListLinePlot(lst):
     fig, ax = plt.subplots()
     ax.plot(lst)
     return ax
+
+
+def ContourPlot(expression, arg_specs):
+    pass
 
 
 def PolarPlot(expressions, arg_specs, legends=False):
@@ -146,11 +177,18 @@ def test_Plot3D():
     return Plot3D(expression, ['x', -3, 3], ['y', -2, 2])
 
 
+def test_ParametricPlot3D():
+    """test ParametricPlot3D()"""
+    expression = ['cos(u)', 'sin(u) + cos(v)', 'sin(v)']
+    return ParametricPlot3D(expression, ['u', 0, 2*np.pi], ['v', -np.pi, np.pi])
+
+
 if __name__ == "__main__":
     # ax = test_Plot()
     # ax = test_Plot3D()
     # ax = test_ParametricPlot()
-    ax = test_PolarPlot()
+    # ax = test_PolarPlot()
     # ax = test_ListLinePlot()
-    plt.axis('equal')
+    ax = test_ParametricPlot3D()
+    # plt.axis('equal')
     plt.show()
