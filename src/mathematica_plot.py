@@ -16,7 +16,11 @@ import matplotlib.pyplot as plt
 
 
 def ParametricPlot3D(expression, u_specs, v_specs):
-    """"""
+    """
+    mimic ParametricPlot3D()
+    expression = ['cos(u)', 'sin(u) + cos(v)', 'sin(v)']
+    ParametricPlot3D(expression, ['u', 0, 2*np.pi], ['v', -np.pi, np.pi])
+    """
     u, u_min, u_max = u_specs
     v, v_min, v_max = v_specs
     n_points = 100
