@@ -24,17 +24,20 @@ def ParametricPlot3D(expression, u_specs, v_specs):
     u, u_min, u_max = u_specs
     v, v_min, v_max = v_specs
     n_points = 100
-    u_angles = np.linspace(0, 2*np.pi, n_points)
-    v_angles = np.linspace(0, 2*np.pi, n_points)
+    u_angles = np.linspace(0, 2 * np.pi, n_points)
+    v_angles = np.linspace(0, 2 * np.pi, n_points)
     us, vs = np.meshgrid(u_angles, v_angles)
-    x_func = lambdify([parse_expr(u, evaluate=False), parse_expr(v, evaluate=False)],
-            parse_expr(expression[0], evaluate=False))
+    x_func = lambdify([parse_expr(u, evaluate=False),
+                      parse_expr(v, evaluate=False)],
+                      parse_expr(expression[0], evaluate=False))
     vec_x_func = np.vectorize(x_func)
-    y_func = lambdify([parse_expr(u, evaluate=False), parse_expr(v, evaluate=False)],
-            parse_expr(expression[1], evaluate=False))
+    y_func = lambdify([parse_expr(u, evaluate=False),
+                      parse_expr(v, evaluate=False)],
+                      parse_expr(expression[1], evaluate=False))
     vec_y_func = np.vectorize(y_func)
-    z_func = lambdify([parse_expr(u, evaluate=False), parse_expr(v, evaluate=False)],
-            parse_expr(expression[2], evaluate=False))
+    z_func = lambdify([parse_expr(u, evaluate=False),
+                      parse_expr(v, evaluate=False)],
+                      parse_expr(expression[2], evaluate=False))
     vec_z_func = np.vectorize(z_func)
     xs = vec_x_func(us, vs)
     ys = vec_y_func(us, vs)
@@ -55,8 +58,9 @@ def Plot3D(expression, x_specs, y_specs):
     n_points = 100
     xs = np.linspace(x_min, x_max, n_points)
     ys = np.linspace(y_min, y_max, n_points)
-    func = lambdify([parse_expr(x, evaluate=False), parse_expr(y, evaluate=False)],
-            parse_expr(expression, evaluate=False))
+    func = lambdify([parse_expr(x, evaluate=False),
+                    parse_expr(y, evaluate=False)],
+                    parse_expr(expression, evaluate=False))
     X, Y = np.meshgrid(xs, ys)
     vec_func = np.vectorize(func)
     Z = vec_func(X, Y)
@@ -87,16 +91,16 @@ def PolarPlot(expressions, arg_specs, legends=False):
     funcs = [None] * n
     arg, arg_min, arg_max = arg_specs
     for i, expression in enumerate(expressions):
-        funcs[i] = lambdify(parse_expr(arg, evaluate=False), \
-                parse_expr(expression, evaluate=False))
+        funcs[i] = lambdify(parse_expr(arg, evaluate=False),
+                            parse_expr(expression, evaluate=False))
         n_points = 100
     ts = np.linspace(arg_min, arg_max, n_points)
     fig, ax = plt.subplots()
     for i, func in enumerate(funcs):
         func_v = np.vectorize(func)
         rs = func_v(ts)
-        xs = rs*np.cos(ts)
-        ys = rs*np.sin(ts)
+        xs = rs * np.cos(ts)
+        ys = rs * np.sin(ts)
         ax.plot(xs, ys, label=expressions[i])
     if legends:
         ax.legend(loc="best")
@@ -105,17 +109,18 @@ def PolarPlot(expressions, arg_specs, legends=False):
 
 def ParametricPlot(expressions, arg_specs, legends=False):
     """mimic ParametricPlot() function of Mathematica
-       Usage: ParametricPlot([["cos(u)", "sin(u)"]], ["u", 0, 2*np.pi], legends=True)
+       Usage: ParametricPlot([["cos(u)", "sin(u)"]],
+       ["u", 0, 2*np.pi], legends=True)
     """
     arg, arg_min, arg_max = arg_specs
     n = len(expressions)
     x_funcs = [None] * n
     y_funcs = [None] * n
     for i, (x_expression, y_expression) in enumerate(expressions):
-        x_funcs[i] = lambdify(parse_expr(arg, evaluate=False), \
-                parse_expr(x_expression, evaluate=False))
-        y_funcs[i] = lambdify(parse_expr(arg, evaluate=False), \
-                parse_expr(y_expression, evaluate=False))
+        x_funcs[i] = lambdify(parse_expr(arg, evaluate=False),
+                              parse_expr(x_expression, evaluate=False))
+        y_funcs[i] = lambdify(parse_expr(arg, evaluate=False),
+                              parse_expr(y_expression, evaluate=False))
     n_points = 100
     ts = np.linspace(arg_min, arg_max, n_points)
     fig, ax = plt.subplots()
@@ -138,8 +143,8 @@ def Plot(expressions, arg_specs, legends=False):
     funcs = [None] * n
     arg, arg_min, arg_max = arg_specs
     for i, expression in enumerate(expressions):
-        funcs[i] = lambdify(parse_expr(arg, evaluate=False), \
-                parse_expr(expression, evaluate=False))
+        funcs[i] = lambdify(parse_expr(arg, evaluate=False),
+                            parse_expr(expression, evaluate=False))
     n_points = 100
     xs = np.linspace(arg_min, arg_max, n_points)
     fig, ax = plt.subplots()
@@ -155,7 +160,7 @@ def Plot(expressions, arg_specs, legends=False):
 def test_Plot():
     """test Plot()"""
     expressions = ['sin(x)', 'sin(2*x)', 'sin(3*x)']
-    return Plot(expressions, ['x', 0, 2*np.pi], legends=True)
+    return Plot(expressions, ['x', 0, 2 * np.pi], legends=True)
 
 
 def test_ListLinePlot():
@@ -165,14 +170,15 @@ def test_ListLinePlot():
 
 def test_ParametricPlot():
     """test ParametricPlot()"""
-    expressions = [['2*cos(u)', '2*sin(u)'], ['2*cos(u)', 'sin(u)'], ['cos(u)', '2*sin(u)'], ['cos(u)', 'sin(u)']]
-    return ParametricPlot(expressions, ['u', 0, 2*np.pi], legends=True)
+    expressions = [['2*cos(u)', '2*sin(u)'], ['2*cos(u)', 'sin(u)'],
+                   ['cos(u)', '2*sin(u)'], ['cos(u)', 'sin(u)']]
+    return ParametricPlot(expressions, ['u', 0, 2 * np.pi], legends=True)
 
 
 def test_PolarPlot():
     """test PolarPlot()"""
     expressions = ['1', '1 + 1/10 * sin(10*t)']
-    return PolarPlot(expressions, ['t', 0, 2*np.pi])
+    return PolarPlot(expressions, ['t', 0, 2 * np.pi])
 
 
 def test_Plot3D():
@@ -184,15 +190,16 @@ def test_Plot3D():
 def test_ParametricPlot3D():
     """test ParametricPlot3D()"""
     expression = ['cos(u)', 'sin(u) + cos(v)', 'sin(v)']
-    return ParametricPlot3D(expression, ['u', 0, 2*np.pi], ['v', -np.pi, np.pi])
+    return ParametricPlot3D(
+        expression, ['u', 0, 2 * np.pi], ['v', -np.pi, np.pi])
 
 
 if __name__ == "__main__":
     # ax = test_Plot()
     # ax = test_Plot3D()
     # ax = test_ParametricPlot()
-    # ax = test_PolarPlot()
+    ax = test_PolarPlot()
     # ax = test_ListLinePlot()
-    ax = test_ParametricPlot3D()
+    # ax = test_ParametricPlot3D()
     # plt.axis('equal')
     plt.show()
