@@ -9,11 +9,14 @@ A Python library that mimics Mathematica plot functionality
 """
 
 # 3rd party library
+import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
-import numpy as np
+import seaborn as sns
 from sympy import lambdify
 from sympy.parsing.sympy_parser import parse_expr
+
+sns.set()
 
 
 def _lambdify_func(parameters, expression):

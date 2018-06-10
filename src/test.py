@@ -8,6 +8,9 @@
 test mathematica_plot module
 """
 
+# standard library
+import sys
+
 # 3rd party library
 import numpy as np
 import matplotlib.pyplot as plt
@@ -55,12 +58,28 @@ def test_ParametricPlot3D():
         expression, ['u', 0, 2 * np.pi], ['v', -np.pi, np.pi])
 
 
-if __name__ == "__main__":
-    # ax = test_Plot()
-    # ax = test_Plot3D()
-    # ax = test_ParametricPlot()
-    # ax = test_PolarPlot()
-    # ax = test_ListLinePlot()
+def command_line_runner():
+    """command line runner"""
+    funcs_names = ['test_Plot',
+                   'test_Plot3D',
+                   'test_ParametricPlot',
+                   'test_PolarPlot',
+                   'test_ListLinePlot',
+                   ]
+    funcs = [globals()[item] for item in funcs_names]
+    if len(sys.argv) != 2:
+        print('Usage: >> python {} <test_type ({}-{})>'.
+              format(sys.argv[0], 0, len(funcs_names) - 1))
+        for i, test in enumerate(funcs_names):
+            _, funcs_name = test.split('_', 1)
+            print("test type = {:d}: {}".format(i, funcs_name + '()'))
+        sys.exit(1)
+    test_type = int(sys.argv[1])
+    assert(0 <= test_type < len(funcs_names))
+    funcs[test_type]()
     plt.axis('equal')
-    ax = test_ParametricPlot3D()
     plt.show()
+
+
+if __name__ == "__main__":
+    command_line_runner()
